@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 🌻</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Mali', cursive;
+    background: linear-gradient(160deg, #fff8e1 0%, #ffe9a8 50%, #ffd1dc 100%);
+    min-height: 100vh; overflow-x: hidden; color: #5a3e1b;
+    display: flex; justify-content: center; align-items: center;
+  }
+  #intro { text-align: center; cursor: pointer; padding: 20px; }
+  #intro .gift { font-size: 120px; animation: shake 1.5s infinite; }
+  #intro p { font-size: 22px; margin-top: 10px; }
+  @keyframes shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-8deg)} 75%{transform:rotate(8deg)} }
+
+  #main { display: none; text-align: center; padding: 30px 16px 60px; max-width: 760px; width: 100%; }
+  h1 { font-size: 40px; color: #e08e0b; margin-bottom: 8px; animation: pop 1s; text-shadow: 2px 2px 0 #fff; }
+  @keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+  .card {
+    background: rgba(255,255,255,0.8); border-radius: 22px; padding: 25px;
+    margin: 22px 0; box-shadow: 0 8px 25px rgba(224,142,11,0.18);
+  }
+  #message { font-size: 18px; line-height: 1.9; min-height: 170px; white-space: pre-line; text-align: left; }
+
+  .gallery { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+  .polaroid {
+    background: #fff; padding: 10px 10px 14px; width: 210px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15); border-radius: 6px;
+    transition: transform .3s; cursor: pointer;
+  }
+  .polaroid:nth-child(1) { transform: rotate(-4deg); }
+  .polaroid:nth-child(2) { transform: rotate(3deg); }
+  .polaroid:nth-child(3) { transform: rotate(-2deg); }
+  .polaroid:hover { transform: scale(1.06) rotate(0); }
+  .polaroid img { width: 100%; height: 260px; object-fit: cover; border-radius: 4px; display: block; }
+  .polaroid p { margin-top: 10px; font-size: 15px; }
+
+  #lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    justify-content: center; align-items: center; z-index: 100; cursor: pointer;
+  }
+  #lightbox img { max-width: 92vw; max-height: 88vh; border-radius: 10px; }
+
+  button {
+    font-family: inherit; font-size: 16px; padding: 10px 26px; border: none;
+    border-radius: 30px; background: #f5a623; color: #fff; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(245,166,35,0.4);
+  }
+  .song-name { font-size: 14px; margin-top: 8px; opacity: .8; }
+
+  .float { position: fixed; bottom: -50px; font-size: 26px; animation: float linear forwards; pointer-events: none; z-index: 1; }
+  @keyframes float { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+  .confetti { position: fixed; top: -10px; width: 10px; height: 10px; animation: fall linear forwards; pointer-events: none; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+  /* ซ่อนตัวเล่น YouTube ไว้นอกจอ */
+  #ytWrap { position: fixed; left: -9999px; top: 0; width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+
+<div id="intro" onclick="openGift()">
+  <div class="gift">🎁</div>
+  <p>มีของขวัญมาให้ แตะเพื่อเปิดสิ 💛</p>
+</div>
+
+<div id="main">
+  <h1>สุขสันต์วันเกิดนะ ที่รัก 🎂</h1>
+  <p style="font-size:20px">ถึง <b>JayJay</b> ทานตะวันของเค้า 🌻</p>
+
+  <div class="card">
+    <div id="message"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:20px">ความทรงจำของเรา 📸</h3>
+    <div class="gallery">
+      <div class="polaroid" onclick="zoom('111.jpg')">
+        <img src="111.jpg" alt="ทานตะวัน">
+        <p>ทานตะวันของเค้า 🌻</p>
+      </div>
+      <div class="polaroid" onclick="zoom('222.jpg')">
+        <img src="222.jpg" alt="ทุ่งหญ้า">
+        <p>ทริปทุ่งหญ้า ฟ้าสวยเหมือนเธอ ☁️</p>
+      </div>
+      <div class="polaroid" onclick="zoom('333.jpg')">
+        <img src="333.jpg" alt="แชมป์">
+        <p>แชมป์ในใจเค้าตลอดไป 🏆</p>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:24px; font-size:18px">รักนะ 💛 จาก Garfield</p>
+</div>
+
+<div id="lightbox" onclick="this.style.display='none'"><img id="lbImg" src="" alt=""></div>
+<div id="ytWrap"><div id="player"></div></div>
+
+
+<script>
+  // ✏️ แก้ข้อความอวยพรตรงนี้
+  const text = `สุขสันต์วันเกิดนะค้าบบบบบบ 🎉
+
+ขอบคุณที่เกิดมา และเข้ามาเป็นของขวัญที่ดีที่สุดในชีวิตของเค้า
+ขอให้ปีนี้ยิ้มสดใสเหมือนดอกทานตะวัน
+สุขภาพแข็งแรง ทำอะไรก็สำเร็จ ได้ถ้วยรางวัลทุกเรื่องเลยนะ 🏆
+
+ไปเที่ยวด้วยกันอีกเยอะ ๆ นะ
+ปีหน้า ปีต่อ ๆ ไป ก็ขอให้มีเค้าอยู่ข้าง ๆ แบบนี้ตลอดไป 💛`;
+
+  
+  function playMusic() {
+    if (player && player.playVideo) { player.playVideo(); playing = true; }
+  }
+  function toggleMusic() {
+    const btn = document.getElementById('musicBtn');
+    if (!player || !player.playVideo) return;
+    if (playing) { player.pauseVideo(); btn.textContent = '🎵 เปิดเพลง'; }
+    else { player.playVideo(); btn.textContent = '⏸️ หยุดเพลง'; }
+    playing = !playing;
+  }
+
+  // ===== เปิดกล่องของขวัญ =====
+  function openGift() {
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    playMusic();
+    confetti();
+    typeWriter(0);
+    setInterval(floatItem, 450);
+  }
+
+  function typeWriter(i) {
+    if (i < text.length) {
+      document.getElementById('message').textContent += text.charAt(i);
+      setTimeout(() => typeWriter(i + 1), 55);
+    }
+  }
+
+  function floatItem() {
+    const f = document.createElement('div');
+    f.className = 'float';
+    const items = ['🌻','💛','🌼','💕','✨','🌻'];
+    f.textContent = items[Math.floor(Math.random() * items.length)];
+    f.style.left = Math.random() * 100 + 'vw';
+    f.style.animationDuration = (5 + Math.random() * 4) + 's';
+    document.body.appendChild(f);
+    setTimeout(() => f.remove(), 9000);
+  }
+
+  function confetti() {
+    const colors = ['#f5a623','#ffd93d','#ff8fab','#ffffff','#8bc34a'];
+    for (let i = 0; i < 130; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDuration = (2 + Math.random() * 3) + 's';
+      c.style.animationDelay = Math.random() * 0.5 + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 6000);
+    }
+  }
+
+  function zoom(src) {
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lightbox').style.display = 'flex';
+  }
+</script>
+</body>
+</html>
